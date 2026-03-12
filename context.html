@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FMA Feedback Analysis · Contexto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #F1F5F9;
+      --white:  #FFFFFF;
+      --border: #CBD5E1;
+      --text:   #0F172A;
+      --muted:  #475569;
+      --light:  #64748B;
+      --red:    #B91C1C;
+    }
+
+    html { font-size: 14px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Navbar ──────────────────────────────────────────────────────────────── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 52px;
+    }
+    .navbar-brand {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .navbar-brand span { color: var(--muted); font-weight: 400; }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .navbar-links a {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .navbar-links a:hover { background: var(--bg); color: var(--text); }
+    .navbar-links a.active { color: var(--text); font-weight: 600; }
+
+    /* ── Artículo ────────────────────────────────────────────────────────────── */
+    .article {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 72px 40px 96px;
+    }
+
+    /* ── Header del artículo ─────────────────────────────────────────────────── */
+    .article-header {
+      margin-bottom: 64px;
+      border-bottom: 2px solid var(--text);
+      padding-bottom: 40px;
+    }
+    .article-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .article-header h1 {
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+    .article-lead {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.85;
+      font-style: italic;
+    }
+    .article-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .article-meta-item {
+      font-size: 11px;
+      color: var(--light);
+    }
+    .article-meta-item strong {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* ── Secciones del artículo ──────────────────────────────────────────────── */
+    .article-section {
+      margin-bottom: 52px;
+    }
+    .article-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .article-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    .article-section p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.85;
+      text-align: justify;
+      margin-bottom: 18px;
+    }
+    .article-section p:last-child { margin-bottom: 0; }
+
+    /* ── Cita destacada ──────────────────────────────────────────────────────── */
+    .pullquote {
+      border-left: 3px solid var(--text);
+      padding: 4px 0 4px 24px;
+      margin: 32px 0;
+    }
+    .pullquote p {
+      font-size: 16px !important;
+      font-style: italic;
+      color: var(--muted) !important;
+      line-height: 1.7 !important;
+      text-align: left !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ── Bloque de preguntas ─────────────────────────────────────────────────── */
+    .question-list {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin: 28px 0;
+    }
+    .question-list-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .question-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--bg);
+    }
+    .question-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .question-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--light);
+      min-width: 20px;
+      padding-top: 1px;
+    }
+    .question-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ── Stat inline ─────────────────────────────────────────────────────────── */
+    .stat-inline {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 10px 2px 8px;
+      white-space: nowrap;
+    }
+    .stat-inline-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--red);
+    }
+    .stat-inline-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── CTA ─────────────────────────────────────────────────────────────────── */
+    .cta-block {
+      background: var(--text);
+      border-radius: 12px;
+      padding: 36px 40px;
+      margin-top: 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .cta-block-text p {
+      font-size: 13px;
+      color: #94A3B8;
+      line-height: 1.6;
+      margin-bottom: 6px;
+      text-align: left !important;
+    }
+    .cta-block-text strong {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: var(--white);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 11px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .cta-button:hover { opacity: 0.88; }
+
+    /* ── Footer ──────────────────────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .footer-author { font-size: 12px; color: var(--muted); }
+    .footer-author strong { color: var(--text); }
+    .footer-date { font-size: 11px; color: var(--light); }
+
+    @media (max-width: 900px) {
+      .navbar { padding: 0 20px; }
+      .article { padding: 48px 24px 64px; }
+      .cta-block { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ Navbar ═══════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">FMA &nbsp;·&nbsp; <span>Feedback Analysis</span></a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="context.html" class="active">Contexto</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="docs.html">Documentación</a>
+  </div>
+</nav>
+
+<!-- ══ Artículo ═════════════════════════════════════════════════════════════ -->
+<div class="article">
+
+  <!-- Header -->
+  <div class="article-header">
+    <div class="article-eyebrow">01 &nbsp;·&nbsp; Contexto del proyecto</div>
+    <h1>¿Por qué el feedback de los técnicos importa ahora más que nunca?</h1>
+    <p class="article-lead">
+      ServiceTitan está migrando a miles de técnicos hacia una aplicación
+      completamente nueva. En ese proceso, cada reseña es una señal directa
+      sobre la acogida de la nueva aplicación.
+    </p>
+    <div class="article-meta">
+      <div class="article-meta-item"><strong>Período analizado:</strong> Sep 2025 – Mar 2026</div>
+      <div class="article-meta-item"><strong>Empresa:</strong> ServiceTitan, Inc.</div>
+      <div class="article-meta-item"><strong>Aplicación:</strong> Field Mobile App (FMA)</div>
+    </div>
+  </div>
+
+
+  <!-- ── 1. ServiceTitan ────────────────────────────────────────────────── -->
+  <div class="article-section">
+    <h2>ServiceTitan y su plataforma de campo</h2>
+
+    <p>
+      ServiceTitan es una empresa de software B2B especializada en gestión de servicios
+      para el hogar. Su plataforma es utilizada por miles de empresas de plomería, HVAC,
+      electricidad y otros rubros de servicio técnico en campo. El producto central conecta
+      al equipo de oficina (despacho, facturación, CRM) con los técnicos que trabajan
+      directamente en los domicilios de los clientes.
+    </p>
+
+    <p>
+      La base de usuarios activos se compone de miles de técnicos que utilizan
+      la plataforma móvil como herramienta principal de trabajo durante sus jornadas:
+      revisan su agenda, acceden a presupuestos, registran fotos, cobran pagos y cierran
+      órdenes de trabajo, todo desde el teléfono o tableta. Para este perfil de usuario,
+      la aplicación no es una herramienta opcional: es el centro de operaciones del día.
+    </p>
+  </div>
+
+
+  <!-- ── 2. La migración ────────────────────────────────────────────────── -->
+  <div class="article-section">
+    <h2>La migración de TMA a FMA</h2>
+
+    <p>
+      Durante varios años, los técnicos utilizaron <strong>ST Mobile</strong> (también
+      conocida como TMA o Cordova), la aplicación móvil <em>legacy</em> de ServiceTitan. A partir
+      de 2025, la empresa inició una migración masiva hacia <strong>FMA (Field Mobile
+      App)</strong>, una aplicación completamente nueva, desarrollada desde cero con
+      tecnología moderna.
+    </p>
+
+    <p>
+      Esta migración no es opcional para los clientes: a medida que los contratos se
+      renuevan o se alcanzan ciertos hitos de uso, las cuentas son migradas de TMA a FMA.
+      El proceso es progresivo y, al momento de este análisis, la migración estaba activa
+      y en plena expansión. El volumen de feedback recibido se había triplicado en seis
+      meses, un indicador directo del ritmo al que nuevos técnicos se incorporaban a la
+      nueva plataforma.
+    </p>
+
+    <div class="pullquote">
+      <p>
+        Un nivel de insatisfacción elevado podría explicarse por la resistencia natural
+        al cambio, o bien ser una señal de que la nueva aplicación tiene brechas reales
+        de producto. Distinguir entre estas dos hipótesis es uno de los objetivos
+        implícitos del análisis.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ── 3. El mecanismo de feedback ───────────────────────────────────── -->
+  <div class="article-section">
+    <h2>El mecanismo de feedback integrado</h2>
+
+    <p>
+      FMA incluye un botón de feedback integrado directamente en la interfaz de la
+      aplicación. Cuando un técnico lo activa, puede dar un <strong>thumbs up</strong>
+      (positivo) o un <strong>thumbs down</strong> (negativo), y opcionalmente agregar
+      un comentario de texto libre. El envío queda registrado automáticamente con
+      metadatos del dispositivo y la versión de la aplicación.
+    </p>
+
+    <p>
+      Este mecanismo captura la experiencia del usuario en el momento exacto en que ocurre,
+      desde el campo, sin intermediarios. A diferencia de encuestas enviadas por correo o
+      sesiones de focus group, el feedback in-app refleja la frustración o satisfacción
+      real de un técnico mientras intenta completar una tarea concreta en su jornada de trabajo.
+      Esa inmediatez es lo que hace valiosa la señal, y también lo que la hace exigente de interpretar.
+    </p>
+  </div>
+
+
+  <!-- ── 4. El problema ─────────────────────────────────────────────────── -->
+  <div class="article-section">
+    <h2>El problema que motivó el análisis</h2>
+
+    <p>
+      A medida que más cuentas migraban a FMA, el equipo de producto acumulaba un volumen
+      creciente de feedback sin una forma estructurada de interpretarlo. Saber que
+      <strong>62.7% de los registros son negativos</strong>
+      es un punto de partida, pero no es suficiente para tomar decisiones: hay que entender
+      <em>qué</em> genera esa insatisfacción, <em>dónde</em> está concentrada, y si la
+      situación está mejorando o empeorando con cada nueva versión de la aplicación.
+    </p>
+
+    <p>
+      Los comentarios de texto libre aportaban contexto valioso, pero sin una categorización
+      sistemática era imposible identificar patrones a escala. El equipo de producto necesitaba
+      una vista consolidada que transformara miles de envíos individuales en hallazgos
+      accionables: no un reporte de datos, sino una herramienta de decisión.
+    </p>
+  </div>
+
+
+  <!-- ── 5. Objetivo y preguntas ────────────────────────────────────────── -->
+  <div class="article-section">
+    <h2>El objetivo analítico</h2>
+
+    <p>
+      Este proyecto tiene como objetivo transformar los envíos de feedback bruto en
+      comunicación estructurada y accionable para el equipo de producto. El dashboard
+      resultante fue diseñado para una audiencia de directores de producto: personas con
+      capacidad de decisión que necesitan priorizar el backlog de ingeniería.
+    </p>
+
+    <p>
+      El flujo narrativo va de lo general (la tendencia agregada de satisfacción a lo largo
+      del tiempo) hacia lo específico: las categorías de problemas más críticas, el
+      rendimiento por versión de la aplicación, y las recomendaciones concretas. Para
+      responder esas preguntas, el análisis se articula en torno a cuatro ejes:
+    </p>
+
+    <div class="question-list">
+      <div class="question-list-label">Preguntas que guían el análisis</div>
+      <div class="question-item">
+        <div class="question-num">01</div>
+        <div class="question-text">¿Cómo ha evolucionado el volumen de feedback y la tasa de satisfacción a lo largo del tiempo?</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">02</div>
+        <div class="question-text">¿Las versiones nuevas de la aplicación están mejorando la experiencia de los técnicos?</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">03</div>
+        <div class="question-text">¿Cuáles son las categorías de problemas más críticas en términos de volumen y severidad?</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">04</div>
+        <div class="question-text">¿Existen diferencias significativas de satisfacción entre plataformas iOS y Android?</div>
+      </div>
+    </div>
+
+    <p>
+      El análisis fue desarrollado inicialmente en Tableau como herramienta de visualización
+      empresarial interna y posteriormente adaptado a un formato web interactivo, con el fin
+      de facilitar su distribución a los stakeholders sin requerir acceso a la plataforma.
+    </p>
+  </div>
+
+
+  <!-- CTA al Dashboard -->
+  <div class="cta-block">
+    <div class="cta-block-text">
+      <strong>Los hallazgos están en el dashboard</strong>
+      <p>
+        Tendencias semanales, rendimiento por versión, matriz de categorías críticas
+        y recomendaciones de producto — todo en una sola vista interactiva.
+      </p>
+    </div>
+    <a href="dashboard.html" class="cta-button">Ver Dashboard →</a>
+  </div>
+
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-author">
+      <strong>André Camilo Alfonso García</strong> &nbsp;·&nbsp; Visualización y Storytelling &nbsp;·&nbsp; MIAD · Uniandes
+    </div>
+    <div class="footer-date">Marzo 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

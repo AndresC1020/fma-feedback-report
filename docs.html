@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FMA Feedback Analysis · Documentación</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #F1F5F9;
+      --white:  #FFFFFF;
+      --border: #CBD5E1;
+      --text:   #0F172A;
+      --muted:  #475569;
+      --light:  #64748B;
+      --red:    #B91C1C;
+    }
+
+    html { font-size: 14px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Navbar ──────────────────────────────────────────────────────────────── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 52px;
+    }
+    .navbar-brand {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .navbar-brand span { color: var(--muted); font-weight: 400; }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .navbar-links a {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .navbar-links a:hover { background: var(--bg); color: var(--text); }
+    .navbar-links a.active { color: var(--text); font-weight: 600; }
+
+    /* ── Artículo ────────────────────────────────────────────────────────────── */
+    .article {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 72px 40px 96px;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────────── */
+    .article-header {
+      margin-bottom: 64px;
+      border-bottom: 2px solid var(--text);
+      padding-bottom: 40px;
+    }
+    .article-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .article-header h1 {
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .article-lead {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.85;
+      font-style: italic;
+    }
+    .article-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .article-meta-item {
+      font-size: 11px;
+      color: var(--light);
+    }
+    .article-meta-item strong { color: var(--muted); font-weight: 600; }
+
+    /* ── Índice ──────────────────────────────────────────────────────────────── */
+    .toc {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin-bottom: 64px;
+    }
+    .toc-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .toc ol {
+      list-style: none;
+      counter-reset: toc;
+    }
+    .toc ol li {
+      counter-increment: toc;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 9px 0;
+      font-size: 13px;
+      color: var(--muted);
+      border-bottom: 1px dotted var(--border);
+    }
+    .toc ol li:last-child { border-bottom: none; }
+    .toc ol li::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--light);
+      min-width: 22px;
+    }
+    .toc ol li a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .toc ol li a:hover { color: var(--text); }
+
+    /* ── Secciones ───────────────────────────────────────────────────────────── */
+    .doc-section {
+      margin-bottom: 60px;
+    }
+    .doc-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .doc-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--text);
+    }
+    .doc-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    .doc-section p {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.85;
+      text-align: justify;
+      margin-bottom: 16px;
+    }
+    .doc-section p:last-child { margin-bottom: 0; }
+    .doc-section ul {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .doc-section li {
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    /* ── Tablas ──────────────────────────────────────────────────────────────── */
+    .tabla-wrap {
+      overflow-x: auto;
+      margin: 18px 0 22px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    thead tr {
+      background: var(--text);
+      color: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    thead th {
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+    }
+    tbody tr:nth-child(even) {
+      background: var(--bg);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    tbody td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* ── Código ──────────────────────────────────────────────────────────────── */
+    .code-block {
+      background: #F1F5F9;
+      color: #0F172A;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11.5px;
+      line-height: 1.65;
+      padding: 18px 20px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 16px 0 20px;
+      white-space: pre;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .code-block .kw  { color: #1E3A5F; font-weight: 600; }
+    .code-block .str { color: #374151; font-style: italic; }
+    .code-block .cm  { color: #64748B; }
+
+    /* ── Chips ───────────────────────────────────────────────────────────────── */
+    .chip {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .footer-author { font-size: 12px; color: var(--muted); }
+    .footer-author strong { color: var(--text); }
+    .footer-date { font-size: 11px; color: var(--light); }
+
+    @media (max-width: 900px) {
+      .navbar { padding: 0 20px; }
+      .article { padding: 48px 24px 64px; }
+    }
+
+    @media print {
+      .navbar { display: none; }
+      .article { padding: 20mm 18mm; }
+      .doc-section { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ Navbar ═══════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">FMA &nbsp;·&nbsp; <span>Feedback Analysis</span></a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="context.html">Contexto</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="docs.html" class="active">Documentación</a>
+  </div>
+</nav>
+
+<!-- ══ Artículo ═════════════════════════════════════════════════════════════ -->
+<div class="article">
+
+  <!-- Header -->
+  <div class="article-header">
+    <div class="article-eyebrow">03 &nbsp;·&nbsp; Documentación técnica</div>
+    <h1>Documentación Técnica del Modelado de Datos</h1>
+    <p class="article-lead">
+      Este documento describe las decisiones de modelado, las fuentes de datos, los filtros
+      aplicados y los campos derivados que sostienen el análisis de feedback de la aplicación
+      móvil FMA de ServiceTitan.
+    </p>
+    <div class="article-meta">
+      <div class="article-meta-item"><strong>Autor:</strong> André Camilo Alfonso García</div>
+      <div class="article-meta-item"><strong>Fecha:</strong> Marzo 2026</div>
+      <div class="article-meta-item"><strong>Fuente:</strong> Snowflake / ServiceTitan DWH</div>
+    </div>
+  </div>
+
+  <!-- Índice -->
+  <div class="toc">
+    <div class="toc-label">Contenido</div>
+    <ol>
+      <li><a href="#sec-fuente">Fuente de datos</a></li>
+      <li><a href="#sec-filtros">Filtros aplicados al conjunto de datos</a></li>
+      <li><a href="#sec-modelado">Modelado de datos: campos derivados</a></li>
+      <li><a href="#sec-vinculacion">Vinculación entre el modelo y las visualizaciones</a></li>
+      <li><a href="#sec-pipeline">Instrucciones para reproducir el análisis</a></li>
+      <li><a href="#sec-metodologia">Decisiones metodológicas y limitaciones</a></li>
+      <li><a href="#sec-autoria">Declaración de autoría y herramientas utilizadas</a></li>
+    </ol>
+  </div>
+
+
+  <!-- ══ 01 — Fuente de datos ══════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-fuente">
+    <div class="doc-section-label">Sección 01</div>
+    <h2>Fuente de Datos</h2>
+
+    <h3>Tabla principal</h3>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+        <tbody>
+          <tr><td><code>Tabla</code></td><td><code>TENANT_DATA.DBO.FEEDBACK</code></td></tr>
+          <tr><td><code>Base de datos</code></td><td>Snowflake, Data Warehouse interno de ServiceTitan</td></tr>
+          <tr><td><code>Granularidad</code></td><td>Una fila por envío de feedback</td></tr>
+          <tr><td><code>Registros extraídos</code></td><td>4,808 filas (después de filtros)</td></tr>
+          <tr><td><code>Rango de fechas</code></td><td>Últimos 6 meses desde la fecha de ejecución</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Columnas clave de la tabla de feedback</h3>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Columna</th><th>Tipo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><code>_TENANT_ID</code></td><td>INT</td><td>Identificador de la cuenta cliente (tenant) en ServiceTitan</td></tr>
+          <tr><td><code>CREATEDBY_ID</code></td><td>INT</td><td>Identificador del técnico que envió el feedback</td></tr>
+          <tr><td><code>RATING</code></td><td>INT</td><td><code>1</code> = thumbs up, <code>0</code> = thumbs down, <code>-1</code> = sin calificación</td></tr>
+          <tr><td><code>COMMENT</code></td><td>VARCHAR</td><td>Comentario de texto libre (opcional; presente en ~40% de los registros)</td></tr>
+          <tr><td><code>CREATEDON</code></td><td>TIMESTAMP</td><td>Fecha y hora del envío</td></tr>
+          <tr><td><code>CHANNEL</code></td><td>INT</td><td>Canal de feedback; se filtra a <code>1</code> (in-app)</td></tr>
+          <tr><td><code>TYPE</code></td><td>INT</td><td>Tipo de feedback; se filtra a <code>2</code> (FMA)</td></tr>
+          <tr><td><code>_IS_DELETED</code></td><td>BOOL</td><td>Marca de borrado lógico; se excluyen registros con valor <code>TRUE</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Tablas de enriquecimiento (JOIN)</h3>
+    <p>
+      La consulta principal se enriquece con dos tablas auxiliares para obtener
+      información del técnico y del tenant:
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Tabla</th><th>Clave de unión</th><th>Dato que aporta</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>DSV_WAREHOUSE.DATA_SCIENCE.FMA_TENANT_DATA</code></td>
+            <td><code>_TENANT_ID</code></td>
+            <td>Nombre del tenant y filtro de tenants reales (excluye cuentas de prueba y demo)</td>
+          </tr>
+          <tr>
+            <td><code>DSV_WAREHOUSE.DATA_SCIENCE.FMA_TECHNICIAN_DATA</code></td>
+            <td><code>CREATEDBY_ID</code></td>
+            <td>Sistema operativo del dispositivo, marca, modelo y versión de la aplicación</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Cabe señalar que la tabla <code>FMA_TECHNICIAN_DATA</code> refleja el <em>último
+      dispositivo conocido</em> del técnico, no necesariamente el dispositivo utilizado en
+      el momento del envío. Para la mayoría de los técnicos esto es equivalente, pero puede
+      haber imprecisión en casos de técnicos que cambian de dispositivo frecuentemente.
+    </p>
+  </div>
+
+
+  <!-- ══ 02 — Filtros ══════════════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-filtros">
+    <div class="doc-section-label">Sección 02</div>
+    <h2>Filtros Aplicados al Conjunto de Datos</h2>
+
+    <p>
+      La consulta aplica cuatro filtros sobre la tabla de feedback en el momento de la
+      extracción. Cada filtro tiene una justificación analítica específica:
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Filtro SQL</th><th>Justificación</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>DATE(FB.CREATEDON) &gt;= DATEADD('MONTH', -6, DATE_TRUNC('MONTH', CURRENT_DATE))</code></td>
+            <td>Limita el análisis a los últimos 6 meses desde la fecha de ejecución. Mantiene el análisis relevante al estado actual de la aplicación y evita que datos de versiones muy antiguas distorsionen los hallazgos.</td>
+          </tr>
+          <tr>
+            <td><code>FB._IS_DELETED = FALSE</code></td>
+            <td>Excluye registros con borrado lógico. ServiceTitan utiliza un patrón de soft-delete en varias tablas; incluir estos registros introduciría datos inválidos.</td>
+          </tr>
+          <tr>
+            <td><code>FB.CHANNEL = 1</code></td>
+            <td>Restringe a feedback enviado desde la aplicación móvil (canal in-app). Excluye otros canales como encuestas por correo o formularios web, que tienen una naturaleza distinta y no son comparables.</td>
+          </tr>
+          <tr>
+            <td><code>FB.TYPE = 2</code></td>
+            <td>Filtra únicamente el tipo de feedback de FMA. La misma tabla almacena feedback de otros productos de ServiceTitan; este filtro garantiza que solo se analice FMA.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Adicionalmente, el JOIN con <code>FMA_TENANT_DATA</code> actúa como un filtro
+      implícito que excluye cuentas de prueba, demos y tenants internos. Esto es crítico
+      para que la señal de feedback refleje experiencias de usuarios reales en producción,
+      no pruebas internas.
+    </p>
+    <p>
+      El filtro de 6 meses es dinámico: cada vez que la consulta se ejecuta, el punto de
+      corte se recalcula automáticamente. Esto permite actualizar el dashboard con datos
+      frescos sin modificar el código SQL.
+    </p>
+  </div>
+
+
+  <!-- ══ 03 — Modelado ═════════════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-modelado">
+    <div class="doc-section-label">Sección 03</div>
+    <h2>Modelado de Datos: Campos Derivados</h2>
+
+    <p>
+      El conjunto de datos crudo contiene principalmente un número de calificación (0 o 1)
+      y texto libre en un campo de comentario. Para poder visualizar patrones, fue necesario
+      construir cuatro campos derivados mediante reglas deterministas aplicadas en SQL.
+    </p>
+    <p>
+      Se eligió clasificación basada en palabras clave (<code>CASE WHEN</code> /
+      <code>REGEXP_LIKE</code> en Snowflake) en lugar de un modelo de <em>machine learning</em>.
+      Esto garantiza que las reglas sean auditables, replicables sin infraestructura de ML,
+      y fáciles de ajustar cuando el vocabulario de los usuarios evoluciona con nuevas
+      versiones de la aplicación.
+    </p>
+
+    <h3>Campo RATING_LABEL</h3>
+    <p>
+      Traduce el valor numérico del campo <code>RATING</code> a una etiqueta legible.
+      Es el campo más sencillo del modelo: una correspondencia directa sin lógica condicional.
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Valor RATING</th><th>RATING_LABEL</th><th>Interpretación</th></tr></thead>
+        <tbody>
+          <tr><td><code>1</code></td><td>Positive</td><td>El técnico presionó thumbs up</td></tr>
+          <tr><td><code>0</code></td><td>Negative</td><td>El técnico presionó thumbs down</td></tr>
+          <tr><td><code>-1</code></td><td>No Rating</td><td>El técnico envió un comentario sin calificación</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Los cálculos de tasa negativa se realizan siempre sobre el subconjunto con rating
+      (Positive + Negative), excluyendo los registros <em>No Rating</em> del denominador.
+      Al momento del análisis, el conjunto con rating corresponde a 4,465 registros de
+      los 4,808 totales.
+    </p>
+
+    <h3>Campo CATEGORY</h3>
+    <p>
+      Clasifica el comentario según su tema principal. Las reglas se evalúan en orden
+      secuencial: el primer WHEN que coincide determina la categoría asignada. Esto
+      implica que categorías más graves (como Bugs) tienen prioridad sobre categorías
+      más generales (como Usability). Para evitar falsos positivos con palabras que son
+      substrings de otras, se utiliza <code>REGEXP_LIKE</code> con límites de palabra
+      (<code>\\b</code>) en los casos de mayor riesgo.
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Categoría</th><th>Palabras clave representativas</th><th>Orden</th></tr></thead>
+        <tbody>
+          <tr><td>No Classification</td><td>Comentario NULL o vacío</td><td>1</td></tr>
+          <tr><td>Bugs &amp; Technical Errors</td><td>crash, freeze, broken, bug, error, not working</td><td>2</td></tr>
+          <tr><td>Performance</td><td>slow, lag, laggy, loading, takes forever</td><td>3</td></tr>
+          <tr><td>Photos &amp; Media</td><td>photo, camera, upload, video, image, attachment</td><td>4</td></tr>
+          <tr><td>Estimates &amp; Pricebook</td><td>estimate, pricebook, quote, pricing, line item</td><td>5</td></tr>
+          <tr><td>Forms &amp; Checklists</td><td>form, checklist, paperwork, inspection form</td><td>6</td></tr>
+          <tr><td>Invoicing &amp; Billing</td><td>invoice, billing, payment, receipt</td><td>7</td></tr>
+          <tr><td>Scheduling &amp; Dispatch</td><td>schedule, dispatch, appointment, notification</td><td>8</td></tr>
+          <tr><td>Sync &amp; Data Loss</td><td>sync, offline, data lost, not saving</td><td>9</td></tr>
+          <tr><td>Missing Features / Legacy</td><td>old app, missing feature, used to have, go back to</td><td>10</td></tr>
+          <tr><td>Time Tracking</td><td>time tracking, clock in/out, timesheet, drive time</td><td>11</td></tr>
+          <tr><td>Usability &amp; UX</td><td>navigate, confusing, hard to use, too many clicks</td><td>12</td></tr>
+          <tr><td>Connectivity</td><td>wifi, network, no connection, offline mode</td><td>13</td></tr>
+          <tr><td>Feature Requests</td><td>would be nice, please add, why can't we</td><td>14</td></tr>
+          <tr><td>Battery &amp; Resources</td><td>battery, overheating, power drain</td><td>15</td></tr>
+          <tr><td>Positive Feedback</td><td>great, excellent, love it, works great (con guardia de negación)</td><td>16</td></tr>
+          <tr><td>General / Other</td><td>Ninguna regla anterior aplicó</td><td>17</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Las categorías <em>No Classification</em> y <em>General / Other</em> se excluyen
+      de los gráficos del dashboard. Representan aproximadamente el 60% de los registros,
+      correspondientes a técnicos que no dejaron comentario de texto.
+    </p>
+
+    <h3>Campo SENTIMENT</h3>
+    <p>
+      Clasifica el tono emocional del comentario de manera independiente a la calificación
+      numérica. Es útil porque algunas frases positivas encierran quejas y viceversa.
+      Las reglas incluyen bloques de negación que se evalúan antes que las palabras positivas.
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Sentimiento</th><th>Lógica de detección</th></tr></thead>
+        <tbody>
+          <tr><td>Very Negative</td><td>Palabras de fuerte carga negativa: terrible, garbage, trash, sucks, hate this app</td></tr>
+          <tr><td>Negative</td><td>Negaciones de positivos (not good, hard to use) + palabras generales negativas (crash, bug, slow)</td></tr>
+          <tr><td>Neutral</td><td>Fallback cuando ningún indicador emocional claro aparece (ok, okay, decent, average)</td></tr>
+          <tr><td>Positive</td><td>Palabras positivas sin contraste: great, good, easy, smooth, works well</td></tr>
+          <tr><td>Very Positive</td><td>Palabras de fuerte carga positiva (love, excellent, amazing) sin "but", "however", "issue", "slow" o "wish"</td></tr>
+          <tr><td>No Classification</td><td>Comentario NULL o vacío</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Campo PRIORITY</h3>
+    <p>
+      Estima la urgencia operacional del problema descrito en el comentario. A diferencia
+      de CATEGORY y SENTIMENT, PRIORITY no clasifica el <em>tema</em> ni el <em>tono</em>,
+      sino la <em>severidad del impacto</em> en el flujo de trabajo del técnico.
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Prioridad</th><th>Señales en el texto</th><th>Interpretación</th></tr></thead>
+        <tbody>
+          <tr><td><strong>High</strong></td><td>not working, force close, data lost, unable to complete, black screen</td><td>El técnico no pudo completar su tarea. Bloqueo total.</td></tr>
+          <tr><td><strong>Medium</strong></td><td>slow, lag, glitch, bug, error, crash, sync issue, photos not uploading</td><td>Fricción significativa que ralentiza el trabajo pero no lo bloquea completamente.</td></tr>
+          <tr><td><strong>Low</strong></td><td>Ningún indicador de alto o medio impacto</td><td>Incomodidad o sugerencia de mejora sin impacto urgente.</td></tr>
+          <tr><td><strong>No Classification</strong></td><td>Comentario NULL o vacío</td><td>No hay suficiente información para asignar prioridad.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ══ 04 — Vinculación ══════════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-vinculacion">
+    <div class="doc-section-label">Sección 04</div>
+    <h2>Vinculación entre el Modelo de Datos y las Visualizaciones</h2>
+
+    <p>
+      Esta sección documenta de manera explícita cómo cada campo del modelo alimenta las
+      visualizaciones del dashboard. El objetivo es demostrar que el modelado de datos no
+      fue un ejercicio independiente, sino que cada decisión de clasificación responde
+      directamente a una necesidad de comunicación visual.
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Gráfico</th><th>Campo(s) utilizados</th><th>Cómo se usa el campo</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span><strong>Gráfico 01.</strong></span> Volumen y tasa negativa semanal</td>
+            <td><code>RATING_LABEL</code>, <code>CREATEDON</code></td>
+            <td>Se agrupan los registros por semana y por RATING_LABEL para construir las barras apiladas. La tasa negativa (línea punteada) se calcula como Negative / (Positive + Negative) por semana.</td>
+          </tr>
+          <tr>
+            <td><span><strong>Gráfico 02.</strong></span> Tasa negativa por versión de app</td>
+            <td><code>RATING_LABEL</code>, <code>TECHNICIAN_APP_VERSION</code></td>
+            <td>Se filtra a versiones con 50 o más registros para garantizar significancia estadística. El color de cada barra (verde, ámbar, rojo) se asigna según umbrales de severidad.</td>
+          </tr>
+          <tr>
+            <td><span><strong>Gráfico 03.</strong></span> Matriz de dolor: volumen vs. severidad</td>
+            <td><code>CATEGORY</code>, <code>RATING_LABEL</code></td>
+            <td>Cada burbuja es una categoría (excluyendo No Classification y General / Other). El eje X es la tasa negativa; el eje Y es el total de registros con rating.</td>
+          </tr>
+          <tr>
+            <td><span><strong>Gráfico 04.</strong></span> Satisfacción por plataforma</td>
+            <td><code>RATING_LABEL</code>, <code>TECHNICIAN_DEVICE_OPERATING_SYSTEM</code></td>
+            <td>Se filtran registros con iOS o Android y se calcula la tasa positiva/negativa por plataforma. Barras apiladas al 100% para facilitar la comparación proporcional.</td>
+          </tr>
+          <tr>
+            <td><span><strong>Gráfico 05.</strong></span> Distribución de categorías</td>
+            <td><code>CATEGORY</code>, <code>RATING_LABEL</code></td>
+            <td>Muestra el conteo de registros por categoría (excluyendo sin clasificación). El color de cada barra hereda la tasa negativa del Gráfico 3.</td>
+          </tr>
+          <tr>
+            <td><span><strong>Gráfico 06.</strong></span> Desglose de prioridad (dona)</td>
+            <td><code>PRIORITY</code></td>
+            <td>Se filtran registros con PRIORITY igual a High, Medium o Low. El gráfico muestra la distribución proporcional de los tres niveles.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Los cuatro campos derivados (RATING_LABEL, CATEGORY, SENTIMENT, PRIORITY) se calculan
+      íntegramente en la consulta SQL original. El script de Python (<code>build_web.py</code>)
+      no realiza ningún modelado adicional: solo agrega y visualiza. Esto garantiza que el
+      modelo sea independiente de la herramienta de visualización y pueda replicarse en
+      cualquier entorno con acceso a Snowflake. Cabe señalar que el campo SENTIMENT, aunque
+      forma parte del modelo de datos, no se visualiza de manera directa en el dashboard
+      actual; su valor reside en enriquecer el conjunto de datos para consultas ad hoc.
+    </p>
+  </div>
+
+
+  <!-- ══ 05 - Pipeline ═════════════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-pipeline">
+    <div class="doc-section-label">Sección 05</div>
+    <h2>Instrucciones para Reproducir el Análisis</h2>
+
+    <p>
+      El proceso de actualización del dashboard está diseñado para ejecutarse con un único
+      comando desde la terminal. Requiere acceso a Snowflake y Python 3.10 o superior.
+      Las credenciales de conexión se gestionan mediante variables de entorno para evitar
+      que queden expuestas en el código fuente.
+    </p>
+
+    <h3>Paso 1 - Configurar credenciales</h3>
+    <p>
+      Crear un archivo <code>.env</code> en la raíz del proyecto a partir de la plantilla
+      <code>.env.example</code> incluida en el repositorio, y completarlo con las
+      credenciales de Snowflake:
+    </p>
+    <div class="code-block">SF_ACCOUNT = <span class="str">your-account.snowflakecomputing.com</span>
+SF_USER = <span class="str">your_username</span>
+SF_PASSWORD = <span class="str">your_password</span>
+SF_WAREHOUSE = <span class="str">COMPUTE_WH</span>
+SF_DATABASE = <span class="str">TENANT_DATA</span>
+SF_ROLE = <span class="str">ANALYST_ROLE</span></div>
+
+    <h3>Paso 2 - Instalar dependencias</h3>
+    <div class="code-block"><span class="kw">pip install</span> -r requirements.txt</div>
+
+    <h3>Paso 3 - Ejecutar el pipeline</h3>
+    <p>
+      El script <code>pipeline.py</code> se encarga de todo: se conecta a Snowflake,
+      ejecuta <code>query.sql</code>, procesa los resultados y genera el dashboard
+      actualizado en <code>index.html</code>.
+    </p>
+    <div class="code-block"><span class="kw">python</span> pipeline.py
+
+<span class="cm"># [extract]  4,808 registros extraídos</span>
+<span class="cm"># [build]    index.html generado (74 KB)</span>
+<span class="cm"># [done]     62.7% tasa negativa | 3,850 técnicos únicos</span></div>
+
+    <h3>Paso 4 - Compartir resultados</h3>
+    <p>
+      El dashboard actualizado se puede verificar localmente abriendo <code>index.html</code>
+      en cualquier navegador, o compartirse con los stakeholders a través del enlace público
+      en GitHub Pages. Los gráficos son interactivos y no requieren instalación adicional
+      del lado del usuario.
+    </p>
+
+    <h3>Estructura de archivos del proyecto</h3>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Archivo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><code>.env</code></td><td>Credenciales de Snowflake. No se incluye en el repositorio.</td></tr>
+          <tr><td><code>.env.example</code></td><td>Plantilla de variables de entorno requeridas.</td></tr>
+          <tr><td><code>query.sql</code></td><td>Consulta Snowflake: filtros, JOINs y campos derivados.</td></tr>
+          <tr><td><code>pipeline.py</code></td><td>Orquestador principal. Extrae datos de Snowflake y genera el dashboard.</td></tr>
+          <tr><td><code>build_web.py</code></td><td>Módulo de visualización. Genera los gráficos y escribe <code>index.html</code>.</td></tr>
+          <tr><td><code>requirements.txt</code></td><td>Dependencias del proyecto con versiones mínimas fijadas.</td></tr>
+          <tr><td><code>dashboard.html</code></td><td>Dashboard publicado. Se sobreescribe en cada ejecución del pipeline.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ══ 06 — Metodología ══════════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-metodologia">
+    <div class="doc-section-label">Sección 06</div>
+    <h2>Decisiones Metodológicas y Limitaciones</h2>
+
+    <h3>Decisiones de diseño</h3>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Decisión</th><th>Razón</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Clasificación por palabras clave, sin modelo de ML</td>
+            <td>Las reglas son auditables y replicables sin infraestructura adicional. El vocabulario de feedback de técnicos de campo es acotado. Un modelo de ML agregaría complejidad sin garantizar mayor precisión en este dominio específico.</td>
+          </tr>
+          <tr>
+            <td>Una categoría por comentario (single-label)</td>
+            <td>Simplifica el análisis y la visualización. Un comentario que menciona tanto fotos como un crash se clasifica como Bugs (categoría de mayor severidad, evaluada primero).</td>
+          </tr>
+          <tr>
+            <td>Ventana de 6 meses con filtro dinámico</td>
+            <td>Mantiene el análisis relevante al estado actual de la aplicación. El filtro dinámico permite reutilizar la consulta mes a mes sin modificaciones.</td>
+          </tr>
+          <tr>
+            <td>Exclusión de cuentas de prueba vía JOIN a FMA_TENANT_DATA</td>
+            <td>Las cuentas de prueba generan feedback artificial que distorsionaría las tasas. El JOIN actúa como filtro de calidad sin requerir una lista manual de IDs.</td>
+          </tr>
+          <tr>
+            <td>Tasa negativa calculada sobre registros con rating</td>
+            <td>Los registros <em>No Rating</em> representan técnicos que dejaron comentario sin presionar thumbs up o down. Incluirlos en el denominador diluiría la tasa sin aportar información sobre satisfacción.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Limitaciones del análisis</h3>
+    <ul>
+      <li>
+        <strong>El 60% de los registros no tiene comentario.</strong> Los campos CATEGORY,
+        SENTIMENT y PRIORITY solo tienen valor informativo cuando hay texto. Los patrones
+        de categoría representan al subconjunto que escribe, no a la totalidad de usuarios.
+      </li>
+      <li>
+        <strong>La clasificación es sensible al orden de las reglas.</strong> Si un comentario
+        menciona tanto un crash como una queja de UX, se clasifica como Bugs porque esa
+        regla se evalúa primero. Esto puede subestimar la presencia de categorías de menor
+        prioridad en comentarios mixtos.
+      </li>
+      <li>
+        <strong>El dispositivo asociado al feedback puede no ser el del momento del envío.</strong>
+        La tabla de datos del técnico almacena el último dispositivo conocido. Para técnicos
+        que cambian de dispositivo, el análisis de plataforma puede tener imprecisión.
+      </li>
+      <li>
+        <strong>El análisis es descriptivo, no causal.</strong> Se pueden identificar patrones
+        y correlaciones, pero no afirmar con certeza la causa técnica subyacente sin datos
+        adicionales de telemetría de la aplicación.
+      </li>
+      <li>
+        <strong>Las reglas de clasificación tienen una fecha de construcción.</strong> Fueron
+        validadas sobre el corpus disponible a febrero de 2026. A medida que la aplicación
+        evolucione, pueden surgir temas no cubiertos que caigan en "General / Other".
+      </li>
+    </ul>
+    <p>
+      Finalmente, vale mencionar que si se agregan nuevas categorías a las reglas SQL, el
+      script de Python refleja los cambios en la próxima ejecución del pipeline, ya que
+      lee las categorías directamente desde los datos sin valores codificados en el código.
+    </p>
+  </div>
+
+
+  <!-- ══ 07 — Autoría ══════════════════════════════════════════════════════ -->
+  <div class="doc-section" id="sec-autoria">
+    <div class="doc-section-label">Sección 07</div>
+    <h2>Declaración de Autoría y Herramientas Utilizadas</h2>
+
+    <p>
+      En cumplimiento de los estándares académicos del programa, esta sección detalla la
+      autoría de cada componente del proyecto y el rol específico que tuvieron las
+      herramientas de apoyo externas en su elaboración.
+    </p>
+
+    <h3>Trabajo de autoría propia</h3>
+    <p>
+      La totalidad del trabajo analítico fue desarrollada de forma independiente por el
+      estudiante. Esto incluye la identificación y exploración de las tablas relevantes en
+      el Data Warehouse de Snowflake, el diseño de la consulta SQL inicial, la definición
+      de los filtros y los JOINs necesarios para extraer datos de producción, y el
+      desarrollo de los campos derivados (CATEGORY, SENTIMENT, PRIORITY) a partir del
+      análisis del vocabulario real de los comentarios. Las conversaciones con los
+      stakeholders del equipo de producto, que permitieron entender qué preguntas debía
+      responder el análisis, también fueron responsabilidad del estudiante.
+    </p>
+    <p>
+      El análisis exploratorio de los datos, la selección de las visualizaciones y métricas
+      más relevantes para la audiencia objetivo, y la identificación de los principales
+      hallazgos e insights del reporte fueron producto del juicio analítico del estudiante.
+      El reporte original fue desarrollado en Tableau como herramienta de visualización
+      empresarial; la adaptación posterior a un formato web interactivo buscó ampliar su
+      alcance y facilitar su distribución a los stakeholders sin requerir acceso a la
+      plataforma. Los insights redactados en el reporte web, así como el contenido de este
+      documento técnico, fueron escritos por el estudiante.
+    </p>
+
+    <h3>Uso de herramientas de inteligencia artificial</h3>
+    <p>
+      Se utilizó <strong>Claude Code</strong> (Anthropic) como herramienta de apoyo en dos
+      aspectos puntuales del proyecto: la mejora del formato y la estructura visual del
+      reporte web, y la revisión de redacción del presente documento técnico. El uso de
+      esta herramienta se limitó a aspectos de presentación y forma, sin intervención en
+      el contenido analítico, los hallazgos, ni las decisiones metodológicas, que son de
+      autoría exclusiva del estudiante.
+    </p>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Componente</th><th>Autoría</th></tr></thead>
+        <tbody>
+          <tr><td>Exploración de datos y búsqueda de tablas en Snowflake</td><td>El estudiante</td></tr>
+          <tr><td>Diseño de la consulta SQL, filtros y campos derivados</td><td>El estudiante</td></tr>
+          <tr><td>Conversaciones con stakeholders y definición del alcance</td><td>El estudiante</td></tr>
+          <tr><td>Análisis exploratorio e identificación de hallazgos</td><td>El estudiante</td></tr>
+          <tr><td>Selección de visualizaciones y métricas del reporte</td><td>El estudiante</td></tr>
+          <tr><td>Reporte original en Tableau</td><td>El estudiante</td></tr>
+          <tr><td>Redacción de insights y narrativa del reporte web</td><td>El estudiante</td></tr>
+          <tr><td>Redacción de este documento técnico</td><td>El estudiante</td></tr>
+          <tr><td>Formato y estructura visual del reporte web</td><td>El estudiante, con apoyo de Claude Code</td></tr>
+          <tr><td>Revisión de redacción y estilo del documento técnico</td><td>El estudiante, con apoyo de Claude Code</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-author">
+      <strong>André Camilo Alfonso García</strong> &nbsp;·&nbsp; Visualización y Storytelling &nbsp;·&nbsp; MIAD · Uniandes
+    </div>
+    <div class="footer-date">Marzo 2026</div>
+  </div>
+
+</div>
+</body>
+</html>
